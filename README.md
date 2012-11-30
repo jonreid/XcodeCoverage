@@ -1,9 +1,6 @@
 These scripts provide a simple way to generate HTML reports of the code coverage
 of your Xcode 4.5 project.
 
-The goal is to faciliate manual browsing of code coverage, without requiring a
-separate app.
-
 
 Installation
 ============
@@ -26,7 +23,17 @@ Execution
 
 1. Run your unit tests
 2. In Terminal, cd to your project's XcodeCoverage folder, then
+
     $ ./getcov
+
+
+Modification
+============
+
+There are two places you may wish to modify:
+1. In envcov.sh, ``LCOV_INFO`` determines the name shown in the report
+2. In getcov, edit ``exclude_data()`` to change what code to exclude, for
+example, third-party libraries.
 
 
 More resources
@@ -34,4 +41,4 @@ More resources
 
 * [Sources](https://github.com/jonreid/XcodeCoverage)
 * [Quality Coding](http://qualitycoding.org/) - Tools, tips & techniques for
-_building quality in_ to iOS development.
+_building quality in_ to iOS development
