@@ -1,4 +1,3 @@
-#!/bin/sh
 #
 #   Copyright 2012 Jonathan M. Reid. See LICENSE.txt
 #
