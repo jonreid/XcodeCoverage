@@ -19,8 +19,6 @@ cd ${BUILT_PRODUCTS_DIR}
 mkdir lcov
 cd lcov
 
-LCOV_INFO=Coverage.info
-
 # Gather coverage data
 "${LCOV_PATH}/lcov" -b "${SRCROOT}" -d "${OBJ_DIR}" --capture -o ${LCOV_INFO}
 
