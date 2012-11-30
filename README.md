@@ -30,7 +30,8 @@ Execution
 Modification
 ============
 
-There are two places you may wish to modify:
+There are two places you may want to modify:
+
 1. In envcov.sh, ``LCOV_INFO`` determines the name shown in the report
 2. In getcov, edit ``exclude_data()`` to change what code to exclude, for
 example, third-party libraries.
