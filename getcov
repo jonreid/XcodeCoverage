@@ -39,7 +39,7 @@ exclude_data()
     remove_pattern "main.m"
 }
 
-generate_html()
+generate_report()
 {
     "${LCOV_PATH}/genhtml" --output-directory . ${LCOV_INFO}
     open index.html
@@ -49,4 +49,4 @@ remove_old_report
 enter_lcov_dir
 gather_coverage
 exclude_data
-generate_html
+generate_report
