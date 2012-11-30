@@ -24,6 +24,7 @@ Execution
 1. Run your unit tests
 2. In Terminal, cd to your project's XcodeCoverage folder, then
 
+
     $ ./getcov
 
 
