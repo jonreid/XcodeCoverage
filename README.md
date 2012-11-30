@@ -33,7 +33,7 @@ Modification
 There are two places you may want to modify:
 
 1. In envcov.sh, ``LCOV_INFO`` determines the name shown in the report.
-2. In getcov, edit ``exclude_data()`` to change what code to exclude, for
+2. In getcov, edit ``exclude_data()`` to specify which files to exclude, for
 example, third-party libraries.
 
 

@@ -28,16 +28,11 @@ gather_coverage()
     "${LCOV_PATH}/lcov" -b "${SRCROOT}" -d "${OBJ_DIR}" --capture -o ${LCOV_INFO}
 }
 
-remove_pattern()
-{
-    "${LCOV_PATH}/lcov" -d "${OBJ_DIR}" --remove ${LCOV_INFO} $@ -o ${LCOV_INFO}
-}
-
 exclude_data()
 {
-    remove_pattern "/Applications/Xcode.app/*"
-    remove_pattern "main.m"
-    # Remove other patterns if you like...
+    "${LCOV_PATH}/lcov" -d "${OBJ_DIR}" --remove ${LCOV_INFO} "/Applications/Xcode.app/*" -o ${LCOV_INFO}
+    "${LCOV_PATH}/lcov" -d "${OBJ_DIR}" --remove ${LCOV_INFO} "main.m" -o ${LCOV_INFO}
+    # Remove other patterns here...
 }
 
 generate_report()
