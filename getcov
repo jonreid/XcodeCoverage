@@ -37,6 +37,7 @@ exclude_data()
 {
     remove_pattern "/Applications/Xcode.app/*"
     remove_pattern "main.m"
+    # Remove other patterns if you like...
 }
 
 generate_report()
