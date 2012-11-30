@@ -32,7 +32,7 @@ Modification
 
 There are two places you may want to modify:
 
-1. In envcov.sh, ``LCOV_INFO`` determines the name shown in the report
+1. In envcov.sh, ``LCOV_INFO`` determines the name shown in the report.
 2. In getcov, edit ``exclude_data()`` to change what code to exclude, for
 example, third-party libraries.
 
@@ -41,5 +41,8 @@ More resources
 ==============
 
 * [Sources](https://github.com/jonreid/XcodeCoverage)
-* [Quality Coding](http://qualitycoding.org/) - Tools, tips & techniques for
-_building quality in_ to iOS development
+* Testing tools: [OCHamcrest](https://github.com/hamcrest/OCHamcrest),
+[OCMockito](https://github.com/jonreid/OCMockito),
+[JMRTestTools](https://github.com/jonreid/JMRTestTools)
+* [Quality Coding](http://qualitycoding.org/) blog - Tools, tips & techniques
+for _building quality in_ to iOS development
