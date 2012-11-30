@@ -15,7 +15,7 @@ for your Debug configuration only:
   * Instrument Program Flow
   * Generate Test Coverage Files
 5. In your main target, add a Run Script build phase to execute
-XcodeCoverage/exportenv.sh
+``XcodeCoverage/exportenv.sh``
 
 
 Execution
