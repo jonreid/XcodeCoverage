@@ -1,5 +1,6 @@
 These scripts provide a simple way to generate HTML reports of the code coverage
 of your Xcode 4.5 project.
+For a detailed blog post, see http://qualitycoding.org/xcode-code-coverage/
 
 
 Installation
