@@ -26,6 +26,15 @@ Execution
 
         $ ./getcov
 
+If you make changes to your test code without changing the production code and
+want a clean slate, use the ``cleancov`` script:
+
+    $ ./cleancov
+
+If you make changes to your production code, you should clear out all build
+artifacts before measuring code coverage again. "Clean Build Folder" by holding
+down the Option key in Xcode's "Product" menu.
+
 
 Modification
 ============
