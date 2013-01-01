@@ -4,4 +4,4 @@
 #   Source: https://github.com/jonreid/XcodeCoverage
 #
 
-export | egrep '( BUILT_PRODUCTS_DIR)|(NATIVE_ARCH=)|(OBJECT_FILE_DIR_normal)|(SRCROOT)|(OBJROOT)' > XcodeCoverage/env.sh
+export | egrep '( BUILT_PRODUCTS_DIR)|(CURRENT_ARCH)|(OBJECT_FILE_DIR_normal)|(SRCROOT)|(OBJROOT)' > XcodeCoverage/env.sh
