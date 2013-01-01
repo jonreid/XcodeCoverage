@@ -10,4 +10,4 @@ source env.sh
 LCOV_INFO=Coverage.info
 
 LCOV_PATH=${SRCROOT}/XcodeCoverage/lcov-1.10/bin
-OBJ_DIR=${OBJECT_FILE_DIR_normal}/${NATIVE_ARCH}
+OBJ_DIR=${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}
