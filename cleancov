@@ -7,4 +7,4 @@
 
 source envcov.sh
 
-"${LCOV_PATH}/lcov" -d "${OBJ_DIR}" --zerocounters
+"${LCOV_PATH}/lcov" --zerocounters -d "${OBJ_DIR}"
