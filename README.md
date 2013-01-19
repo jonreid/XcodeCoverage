@@ -19,6 +19,9 @@ for your Debug configuration only:
 6. In your main target, add a Run Script build phase to execute
 ``XcodeCoverage/exportenv.sh``
 
+A few people have been tripped up by the last step: Make sure you add the
+script to your main target (your app or library), not your test target.
+
 
 Execution
 =========
