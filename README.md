@@ -9,7 +9,7 @@ Installation
 1. Fork this repository; you're probably going to want to make your own
 modifications.
 2. Place the XcodeCoverage folder in the same folder as your Xcode project.
-3. [Dowload lcov-1.10](http://downloads.sourceforge.net/ltp/lcov-1.10.tar.gz).
+3. [Download lcov-1.10](http://downloads.sourceforge.net/ltp/lcov-1.10.tar.gz).
 Place the lcov-1.10 folder inside the XcodeCoverage folder.
 4. Get Xcode's coverage instrumentation by going to Xcode Preferences, into Downloads, and installing Command Line Tools.
 5. In your Xcode project, enable these two build settings at the project level
