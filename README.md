@@ -28,7 +28,7 @@ Execution
 =========
 
 1. Run your unit tests
-2. In Terminal, execute `getcov` your project's XcodeCoverage folder.
+2. In Terminal, execute `getcov` in your project's XcodeCoverage folder.
 
 If you make changes to your test code without changing the production code and
 want a clean slate, use the ``cleancov`` script.
