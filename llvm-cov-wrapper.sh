@@ -9,5 +9,5 @@ if [ "$1" = "-v" ]; then
     echo "llvm-cov-wrapper 4.2.1"
     exit 0
 else
-    /usr/bin/gcov $*
+    /usr/bin/gcov "$@"
 fi
