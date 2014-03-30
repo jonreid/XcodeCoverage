@@ -35,6 +35,12 @@ If you make changes to your production code, you should clear out all build
 artifacts before measuring code coverage again. "Clean Build Folder" by holding
 down the Option key in Xcode's "Product" menu.
 
+* Optional: Run code coverage after running unit tests
+  * Edit Xcode scheme -> Test -> Post-actions
+  * Set shell to: ``/bin/bash``  
+  * Set script to:
+  ``source ${SRCROOT}/XcodeCoverage/run_code_coverage_post.sh``
+
 
 Modification
 ============
