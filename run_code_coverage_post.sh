@@ -5,7 +5,7 @@ tell application "Finder"
   set myReply to button returned of (display dialog "Generate code coverage report?")
 end tell
 EOT`
-if [[ $x = "OK" ]]; then 
+if [ $x = "OK" -o $x = "好" ]; then
   echo 'Generating code coverage report'
   ${SRCROOT}/XcodeCoverage/getcov
 fi
