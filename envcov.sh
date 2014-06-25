@@ -16,5 +16,5 @@ OBJ_DIR=${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}
 
 # Fix for the new LLVM-COV that requires gcov to have a -v paramter
 LCOV() {
-	${LCOV_PATH}/lcov $* --gcov-tool ${XCODECOVERAGE_PATH}/llvm-cov-wrapper.sh
+	${LCOV_PATH}/lcov "$@" --gcov-tool ${XCODECOVERAGE_PATH}/llvm-cov-wrapper.sh
 }
