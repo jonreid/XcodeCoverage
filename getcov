@@ -5,12 +5,18 @@
 #   Source: https://github.com/jonreid/XcodeCoverage
 #
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ${DIR}/envcov.sh
+usage()
+{
+    echo "usage: getcov [[[-o output_directory] [-i info_file] [-v]] | [-h]]"
+}
 
 remove_old_report()
 {
-    pushd ${BUILT_PRODUCTS_DIR}
+    if [ "$verbose" = "1" ]; then 
+        echo "XcodeCoverage: Removing old report"
+    fi
+
+    pushd "${OUT_DIR}"
     if [ -e lcov ]; then
         rm -r lcov
     fi
@@ -19,28 +25,84 @@ remove_old_report()
 
 enter_lcov_dir()
 {
-    cd ${BUILT_PRODUCTS_DIR}
+    cd "${OUT_DIR}"
     mkdir lcov
     cd lcov
 }
 
 gather_coverage()
 {
-    LCOV --capture --derive-func-data -b "${SRCROOT}" -d "${OBJ_DIR}" -o ${LCOV_INFO}
+    if [ "$verbose" = "1" ]; then 
+        echo "XcodeCoverage: Gathering coverage"
+    fi
+
+    LCOV --capture --derive-func-data -b "${SRCROOT}" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
 }
 
 exclude_data()
 {
-    LCOV --remove ${LCOV_INFO} "Developer/SDKs/*" -d "${OBJ_DIR}" -o ${LCOV_INFO}
-    LCOV --remove ${LCOV_INFO} "main.m" -d "${OBJ_DIR}" -o ${LCOV_INFO}
+    LCOV --remove "${LCOV_INFO}" "Developer/SDKs/*" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
+    LCOV --remove "${LCOV_INFO}" "main.m" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
     # Remove other patterns here...
+    LCOV --remove "${LCOV_INFO}" "include/*" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
+    LCOV --remove "${LCOV_INFO}" "Classes/External/*" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
 }
 
 generate_report()
 {
-    "${LCOV_PATH}/genhtml" --output-directory . ${LCOV_INFO}
-    open index.html
+    if [ "$verbose" = "1" ]; then 
+        echo "XcodeCoverage: Generating report"
+    fi
+     
+    "${LCOV_PATH}/genhtml" --output-directory . "${LCOV_INFO}"
+     
+    if [ "$show_report" = "1" ]; then
+        if [ "$verbose" = "1" ]; then 
+            echo "XcodeCoverage: Opening report"
+        fi
+    	open index.html
+    fi
 }
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ${DIR}/envcov.sh
+
+OUT_DIR="${BUILT_PRODUCTS_DIR}"
+while [ "$1" != "" ]; do
+    case $1 in
+        -o  )           shift
+                        OUT_DIR=$1
+                        echo "OUT_DIR = ${OUT_DIR}"
+                        ;;
+        -i )            LCOV_INFO=$1
+                        echo "LCOV_INFO = ${LCOV_INFO}"
+                        ;;
+        -v )            verbose=1
+                        echo "Verbose"
+        				;;
+        -s | --show )   show_report=1
+                        echo "Show Report"
+                        ;;
+        -h | --help )   usage
+                        echo "Show Help"
+                        exit
+                        ;;
+        * )             usage
+                        exit 1
+    esac
+    shift
+done
+
+if [ "$verbose" = "1" ]; then 
+    echo "XcodeCoverage: Environment"
+    echo "LCOV_INFO : ${LCOV_INFO}"
+    echo "DIR       : ${DIR}"
+    echo "BUILD_DIR : ${BUILT_PRODUCTS_DIR}"
+    echo "SRCROOT   : ${SRCROOT}"
+    echo "OBJ_DIR   : ${OBJ_DIR}"
+    echo "LCOV_PATH : ${LCOV_PATH}"
+    echo "OUT_DIR   : ${OUT_DIR}"
+fi
 
 remove_old_report
 enter_lcov_dir
