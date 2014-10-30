@@ -74,12 +74,13 @@ while [ "$1" != "" ]; do
                         OUT_DIR=$1
                         echo "OUT_DIR = ${OUT_DIR}"
                         ;;
-        -i )            LCOV_INFO=$1
+        -i )            shift
+                        LCOV_INFO=$1
                         echo "LCOV_INFO = ${LCOV_INFO}"
                         ;;
         -v )            verbose=1
                         echo "Verbose"
-        				;;
+                        ;;
         -s | --show )   show_report=1
                         echo "Show Report"
                         ;;
