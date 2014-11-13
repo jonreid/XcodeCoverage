@@ -10,7 +10,7 @@ source ${DIR}/envcov.sh
 
 remove_old_report()
 {
-    pushd ${BUILT_PRODUCTS_DIR}
+    pushd "${BUILT_PRODUCTS_DIR}"
     if [ -e lcov ]; then
         rm -r lcov
     fi
@@ -19,7 +19,7 @@ remove_old_report()
 
 enter_lcov_dir()
 {
-    cd ${BUILT_PRODUCTS_DIR}
+    cd "${BUILT_PRODUCTS_DIR}"
     mkdir lcov
     cd lcov
 }
