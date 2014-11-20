@@ -10,6 +10,6 @@ Pod::Spec.new do |spec|
   spec.source                   = {:git => 'https://github.com/designatednerd/XcodeCoverage.git', :tag => "#{spec.version}"}
   
   #these files will be brought into the filesystem, but not added to the file. 
-  spec.preserve_paths           = 'cleancov', 'envcov.sh', 'lcov-1.11/*', 'exportenv.sh', 'run_code_coverage_post.sh'
+  spec.preserve_paths           = 'cleancov', 'getcov', 'envcov.sh', 'lcov-1.11/*', 'exportenv.sh', 'run_code_coverage_post.sh'
   spec.requires_arc             = true
 end
