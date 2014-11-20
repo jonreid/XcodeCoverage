@@ -11,7 +11,7 @@ source ${DIR}/env.sh
 LCOV_INFO=Coverage.info
 
 XCODECOVERAGE_PATH="${SRCROOT}/XcodeCoverage"
-LCOV_PATH="${XCODECOVERAGE_PATH}/lcov-1.10/bin"
+LCOV_PATH="${XCODECOVERAGE_PATH}/lcov-1.11/bin"
 OBJ_DIR=${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}
 
 # Fix for the new LLVM-COV that requires gcov to have a -v paramter
