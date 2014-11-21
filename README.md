@@ -56,8 +56,7 @@ Once that task has been completed, the process is very simple:
 
 If you make changes to your test code without changing the production code and want a clean slate, use the `cleancov` script.
 
-If you make changes to your production code, you should clear out all build
-artifacts before measuring code coverage again. "Clean Build Folder" by holding down the Option key in Xcode's "Product" menu.
+If you make changes to your production code, you should clear out all build artifacts before measuring code coverage again. "Clean Build Folder" by holding down the Option key in Xcode's "Product" menu, or by using the ⌥⇧⌘K key combination.
 
 **Optional:** XcodeCoverage can prompt to run code coverage after running unit tests:
 
