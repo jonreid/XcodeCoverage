@@ -10,6 +10,7 @@ ENV_DIR="${DIR}"
 if [[ $DIR == *Pods/XcodeCoverage* ]]
 then
    echo "Using Cocoapods!"
+   cd ${DIR}
    cd ..
    cd ..
    
