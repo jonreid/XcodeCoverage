@@ -73,3 +73,9 @@ There are two places you may want to modify the included files if you are using 
 
 1. In `envcov.sh`, `LCOV_INFO` determines the name shown in the report.
 2. In `getcov`, edit `exclude_data()` to specify which files to exclude, for example, third-party libraries.
+
+Credits
+=======
+
+The `lcov` -> Cobertura script is from [https://github.com/eriwen/lcov-to-cobertura-xml/](https://github.com/eriwen/lcov-to-cobertura-xml/) and is bound by [the license of that project](https://github.com/eriwen/lcov-to-cobertura-xml/blob/master/LICENSE.txt). 
+
