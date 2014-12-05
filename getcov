@@ -36,6 +36,12 @@ exclude_data()
     # Remove other patterns here...
 }
 
+generate_cobertura_xml()
+{
+	enter_lcov_dir
+    python "${DIR}/lcov_cobertura.py" ${LCOV_INFO} --base-dir "${SRCROOT}" --output "coverage.xml"
+}
+
 generate_report()
 {
     "${LCOV_PATH}/genhtml" --output-directory . ${LCOV_INFO}
@@ -46,4 +52,5 @@ remove_old_report
 enter_lcov_dir
 gather_coverage
 exclude_data
+generate_cobertura_xml
 generate_report
