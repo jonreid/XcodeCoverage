@@ -10,7 +10,7 @@ ENV_DIR="${DIR}"
 if [[ $DIR == *Pods/XcodeCoverage* ]]
 then
    echo "Using Cocoapods!"
-   cd ${DIR}
+   cd "${DIR}"
    cd ..
    cd ..
    
@@ -18,7 +18,7 @@ then
    ENV_DIR="$(pwd)"
 fi
 
-source ${ENV_DIR}/env.sh
+source "${ENV_DIR}/env.sh"
 
 # Change the report name if you like:
 LCOV_INFO=Coverage.info
@@ -33,7 +33,7 @@ then
 fi
 
 LCOV_PATH="${XCODECOVERAGE_PATH}/lcov-1.11/bin"
-OBJ_DIR=${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}
+OBJ_DIR="${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}"
 
 # Fix for the new LLVM-COV that requires gcov to have a -v paramter
 LCOV() {
