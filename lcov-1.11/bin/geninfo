@@ -1898,7 +1898,7 @@ sub get_gcov_version()
 	my $version_string;
 	my $result;
 
-	open(GCOV_PIPE, "-|", "$gcov_tool --version")
+	open(GCOV_PIPE, "-|", "\"$gcov_tool\" --version")
 		or die("ERROR: cannot retrieve gcov version!\n");
 	$version_string = <GCOV_PIPE>;
 	# LLVM gcov keeps version information on the second line.
