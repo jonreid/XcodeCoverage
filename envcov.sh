@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 #   Copyright 2014 Jonathan M. Reid. See LICENSE.txt
 #   Created by: Jon Reid, http://qualitycoding.org/
@@ -7,7 +8,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ENV_DIR="${DIR}"
 
-if [[ $DIR == *Pods/XcodeCoverage* ]]
+if [[ "$DIR" == *Pods/XcodeCoverage* ]]
 then
    echo "Using Cocoapods!"
    cd "${DIR}"
@@ -25,7 +26,7 @@ LCOV_INFO=Coverage.info
 
 XCODECOVERAGE_PATH="${SRCROOT}/XcodeCoverage"
 
-if [[ $DIR == *Pods/XcodeCoverage* ]]
+if [[ "$DIR" == *Pods/XcodeCoverage* ]]
 then
    echo "Using Cocoapods!"
    #The current directory will be where XcodeCoverage is living, not in SRCROOT
