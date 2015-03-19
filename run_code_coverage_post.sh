@@ -1,4 +1,7 @@
 #!/bin/bash
+#   XcodeCoverage by Jon Reid, http://qualitycoding/about/
+#   Copyright 2014 Jonathan M. Reid. See LICENSE.txt
+
 button=`/usr/bin/osascript <<EOT
 tell application "Finder"
   activate
