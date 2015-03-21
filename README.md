@@ -50,6 +50,15 @@ Execution
 1. Run your unit tests.
 2. In Terminal, execute `getcov` in your project's XcodeCoverage folder.
 
+`getcov` has the following command-line options:
+
+  * `--show` or `-s`: Show HTML report.
+  * `--xml` or `-x`: Generate Cobertura XML.
+  * `-o output_dir`: Specify output directory.
+  * `-i info_file`: Specify name of generated lcov info file.
+  * `-v`: Enable verbose output.
+  * `-h` or `--help`: Show usage.
+
 If you make changes to your test code without changing the production code and want a clean slate, use the `cleancov` script.
 
 If you make changes to your production code, you should clear out all build artifacts before measuring code coverage again. "Clean Build Folder" by holding down the Option key in Xcode's "Product" menu, or by using the ⌥⇧⌘K key combination.
@@ -59,7 +68,7 @@ If you make changes to your production code, you should clear out all build arti
   * Edit Xcode scheme -> Test -> Post-actions
   * Set "Shell" to: `/bin/bash`
   * Set "Provide build settings from" to your main target
-  * Set script to: `source ${SRCROOT}/XcodeCoverage/run_code_coverage_post.sh`
+  * Set script to: `source ${SRCROOT}/XcodeCoverage/run_code_coverage_post.sh` for standard installation. For CocoaPod installation, use `source ${SRCROOT}/Pods/XcodeCoverage/run_code_coverage_post.sh`
 
 
 Modification
