@@ -1,6 +1,6 @@
 ![XcodeCoverage](http://qualitycoding.org/jrwp/wp-content/uploads/2014/03/XcodeCoverage.png)
 
-These scripts provide a simple way to generate HTML reports of the code coverage of your Xcode project.  
+These scripts provide a simple way to generate HTML reports of the code coverage of your Xcode project.
 
 
 Xcode Project Setup
