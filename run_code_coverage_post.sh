@@ -11,7 +11,8 @@ tell application "Finder"
   set myReply to button returned of (display dialog dialogText buttons {cancelText, okText} cancel button cancelText default button okText)
 end tell
 EOT`
-if [[ $button = "OK" ]]; then 
-  DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-  "${DIR}/getcov" --show
+
+if [[ "${button}" = "OK" ]]; then 
+  scripts="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  "${scripts}/getcov" --show
 fi
