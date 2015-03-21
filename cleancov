@@ -2,7 +2,7 @@
 #   XcodeCoverage by Jon Reid, http://qualitycoding/about/
 #   Copyright 2014 Jonathan M. Reid. See LICENSE.txt
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ${DIR}/envcov.sh
+scripts="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${scripts}/envcov.sh"
 
 LCOV --zerocounters -d "${OBJ_DIR}"
