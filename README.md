@@ -47,10 +47,6 @@ Again, make sure you add the script to your main target (your app or library), n
 Execution
 =========
 
-Immediately after installation, run your application at least once to generate the `env.sh` file, which will be placed at the same level as your `.xcodeproj` folder. This file should *not* be checked into version control, since it contains paths local to your machine. 
-
-Once that task has been completed, the process is very simple: 
-
 1. Run your unit tests.
 2. In Terminal, execute `getcov` in your project's XcodeCoverage folder.
 
