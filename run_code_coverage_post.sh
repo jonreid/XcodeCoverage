@@ -12,7 +12,6 @@ tell application "Finder"
 end tell
 EOT`
 if [[ $button = "OK" ]]; then 
-  echo "Generating code coverage report"
-  ${SRCROOT}/XcodeCoverage/getcov
+  DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  "${DIR}/getcov" --show
 fi
-echo "Done."
