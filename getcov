@@ -62,6 +62,7 @@ generate_report() {
 scripts="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${scripts}/envcov.sh"
 
+LCOV_INFO=Coverage.info
 OUT_DIR="${BUILT_PRODUCTS_DIR}"
 while [ "$1" != "" ]; do
   case $1 in

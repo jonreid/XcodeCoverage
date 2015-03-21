@@ -5,9 +5,6 @@
 scripts="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${scripts}/env.sh"
 
-# Change the report name if you like:
-LCOV_INFO=Coverage.info
-
 LCOV_PATH="${scripts}/lcov-1.11/bin"
 OBJ_DIR="${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}"
 

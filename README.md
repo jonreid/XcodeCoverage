@@ -9,7 +9,7 @@ Xcode Project Setup
 Before you get started, there are a couple of steps you will need to take to prepare your project: 
 
 1. Depending on your version of Xcode, you may need to get Xcode's coverage instrumentation by going to Xcode > Preferences, into Downloads, and installing Command Line Tools. If you do not see this as an option in the Downloads section, the tools should already be installed. 
-4. In your Xcode project, enable these two build settings at the project level for your Debug configuration only:
+2. In your Xcode project, enable these two build settings at the project level for your Debug configuration only:
 	* Instrument Program Flow
 	* Generate Test Coverage Files
 
@@ -19,7 +19,7 @@ Installation: Standard
 
 1. Fork this repository; you're probably going to want to make your own modifications.
 2. Place the XcodeCoverage folder in the same folder as your Xcode project.
-5. In your main target, add a Run Script build phase to execute `XcodeCoverage/exportenv.sh`
+3. In your main target, add a Run Script build phase to execute `XcodeCoverage/exportenv.sh`
 
 A few people have been tripped up by the last step: Make sure you add the script to your main target (your app or library), not your test target.
 
@@ -65,10 +65,8 @@ If you make changes to your production code, you should clear out all build arti
 Modification
 ============
 
-There are two places you may want to modify the included files if you are using the standard installation:
+If you are using the standard installation, you may wish to modify `exclude_data()` in `getcov` to specify which files to exclude, for example, third-party libraries.
 
-1. In `envcov.sh`, `LCOV_INFO` determines the name shown in the report.
-2. In `getcov`, edit `exclude_data()` to specify which files to exclude, for example, third-party libraries.
 
 Credits
 =======
