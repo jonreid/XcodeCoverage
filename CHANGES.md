@@ -2,7 +2,7 @@ Version 1.2.0
 -------------
 _21 Mar 2015_
 
-* Add command line parameters, making it easier to use XcodeCoverage in continuous integration. _Thanks to: Tom Aylesworth_
+* Add `getcov` command line parameters, making it easier to use XcodeCoverage in continuous integration. _Thanks to: Tom Aylesworth_
 * Add Cobertura XML generation. _Thanks to: Ellen Shapiro_
 * Support use as CocoaPod. _Thanks to: Ellen Shapiro_
 * Update to lcov 1.11. _Thanks to: Ellen Shapiro_
