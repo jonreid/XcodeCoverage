@@ -5,6 +5,7 @@ NEXT VERSION
 * Add Cobertura XML generation. _Thanks to: Ellen Shapiro_
 * Support use as CocoaPod. _Thanks to: Ellen Shapiro_
 * Update to lcov 1.11. _Thanks to: Ellen Shapiro_
+* Add XcodeCoverage.xcconfig for simple project setup.
 
 
 Version 1.1.1
