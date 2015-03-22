@@ -3,21 +3,12 @@
 These scripts provide a simple way to generate HTML reports of the code coverage of your Xcode project.
 
 
-Xcode Project Setup
-===================
-
-Before you get started, there are a couple of steps you will need to take to prepare your project: 
-
-1. Depending on your version of Xcode, you may need to get Xcode's coverage instrumentation by going to Xcode > Preferences, into Downloads, and installing Command Line Tools. If you do not see this as an option in the Downloads section, the tools should already be installed. 
-2. In your Xcode project, enable these two build settings at the project level for your Debug configuration only:
-	* Instrument Program Flow
-	* Generate Test Coverage Files
-
-
 Installation: Standard
 ======================
 
-1. Fork this repository; you're probably going to want to make your own modifications.
+Use the standard installation if you want to customize XcodeCoverage to exclude certain files and directories, such as third-party libraries. Otherwise, the CocoaPods installation described below may be more convenient.
+
+1. Fork this repository.
 2. Place the XcodeCoverage folder in the same folder as your Xcode project.
 3. In your main target, add a Run Script build phase to execute `XcodeCoverage/exportenv.sh`
 
@@ -44,6 +35,23 @@ The steps to install via CocoaPods:
 Again, make sure you add the script to your main target (your app or library), not your test target.
 
 
+Xcode Project Setup
+===================
+
+XcodeCoverage comes with an xcconfig file with the build settings required to instrument your code for coverage analysis.
+
+If you already use an xcconfig, include it in the configuration you want to instrument:
+  * Standard installation: `#include "XcodeCoverage/XcodeCoverage.xcconfig"`
+  * CocoaPods installation: `#include "Pods/XcodeCoverage/XcodeCoverage.xcconfig"`
+
+If you don't already use an xcconfig, drag XcodeCoverage.xcconfig into your project. Where it prompts "Add to targets," deselect all targets. (Otherwise, it will be included in the bundle.) Then click on your project in Xcode's Navigator pane, and select the Info tab. For the configuration you want to instrument, select XcodeCoverage.
+
+If you'd rather specify the build settings by hand, enable these two settings at the project level:
+  * Instrument Program Flow
+	* Generate Test Coverage Files
+
+Make sure not to instrument your AppStore release.
+
 Execution
 =========
 
@@ -68,13 +76,13 @@ If you make changes to your production code, you should clear out all build arti
   * Edit Xcode scheme -> Test -> Post-actions
   * Set "Shell" to: `/bin/bash`
   * Set "Provide build settings from" to your main target
-  * Set script to: `source ${SRCROOT}/XcodeCoverage/run_code_coverage_post.sh` for standard installation. For CocoaPod installation, use `source ${SRCROOT}/Pods/XcodeCoverage/run_code_coverage_post.sh`
+  * Set script to `source XcodeCoverage/run_code_coverage_post.sh` for standard installation. For CocoaPods installation, use `source Pods/XcodeCoverage/run_code_coverage_post.sh`
 
 
 Modification
 ============
 
-If you are using the standard installation, you may wish to modify `exclude_data()` in `getcov` to specify which files to exclude, for example, third-party libraries.
+If you are using the standard installation, you can modify `exclude_data()` in `getcov` to specify which files to exclude, such as third-party libraries.
 
 
 Credits
