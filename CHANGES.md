@@ -1,5 +1,6 @@
-NEXT VERSION
-------------
+Version 1.2.0
+-------------
+_22 Mar 2015_
 
 * Add `getcov` command line parameters, making it easier to use XcodeCoverage in continuous integration. _Thanks to: Tom Aylesworth_
 * Add Cobertura XML generation. _Thanks to: Ellen Shapiro_
