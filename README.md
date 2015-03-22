@@ -48,7 +48,7 @@ If you don't already use an xcconfig, drag XcodeCoverage.xcconfig into your proj
 
 If you'd rather specify the build settings by hand, enable these two settings at the project level:
   * Instrument Program Flow
-	* Generate Test Coverage Files
+  * Generate Test Coverage Files
 
 Make sure not to instrument your AppStore release.
 
