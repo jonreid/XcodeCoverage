@@ -1,6 +1,8 @@
 ![XcodeCoverage](http://qualitycoding.org/jrwp/wp-content/uploads/2014/03/XcodeCoverage.png)
 
-These scripts provide a simple way to generate HTML reports of the code coverage of your Xcode project.
+XcodeCoverage provides a simple way to generate reports of the code coverage of your Xcode project. Generated reports include HTML and Cobertura XML.
+
+Coverage data excludes Apple's SDKs, and the exclusion rules can be customized.
 
 
 Installation: Standard
