@@ -3,7 +3,7 @@
 #   Copyright 2015 Jonathan M. Reid. See LICENSE.txt
 
 usage() {
-  echo "usage: getcov [[-s] [-x] [-c] [-o output_dir] [-i info_file] [-v]] | [-h]]"
+  echo "usage: getcov [[-s] [-x] [-xc] [-o output_dir] [-i info_file] [-v]] | [-h]]"
 }
 
 main() {
