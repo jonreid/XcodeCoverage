@@ -9,8 +9,6 @@ usage() {
 main() {
   scripts="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
   source "${scripts}/envcov.sh"
-  
-  readarray XCODECOV_IGNORED_PATHS < "${SRCROOT}/.xcodecoverageignore"
 
   LCOV_INFO=Coverage.info
   output_dir="${BUILT_PRODUCTS_DIR}"
@@ -116,14 +114,12 @@ exclude_data() {
   LCOV --remove "${LCOV_INFO}" "Developer/SDKs/*" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
   LCOV --remove "${LCOV_INFO}" "main.m" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
 
-  #Remove anything Xcode has specified should be ignored.
-  for IGNORE_THIS in ${XCODECOV_IGNORED_PATHS}; do
-  	#use eval to expand any of the variables and then pass them to the shell - this allows
+  #Remove anything the .xcodecoverageignore file has specified should be ignored.
+  cat "${SRCROOT}/.xcodecoverageignore" | while read IGNORE_THIS; do
+    #use eval to expand any of the variables and then pass them to the shell - this allows
   	#use of wildcards in the variables. 
   	eval LCOV --remove "${LCOV_INFO}" "${IGNORE_THIS}" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
   done
-  
-  # Remove other patterns manually below this line
 }
 
 generate_cobertura_xml() {
