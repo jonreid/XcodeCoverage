@@ -81,10 +81,22 @@ If you make changes to your production code, you should clear out all build arti
   * Set script to `source XcodeCoverage/run_code_coverage_post.sh` for standard installation. For CocoaPods installation, use `source Pods/XcodeCoverage/run_code_coverage_post.sh`
 
 
-Modification
-============
+Excluding Files From Coverage
+=============================
 
-If you are using the standard installation, you can modify `exclude_data()` in `getcov` to specify which files to exclude, such as third-party libraries.
+If there are files or folders which you want to have the coverage generator ignore (for instance, third-party libraries not installed via CocoaPods or machine-generated files), add an `.xcodecoverageignore` file to your `SRCROOT`. 
+
+Each line should be a different file or group of files which should be excluded for code coverage purposes. You can use `SRCROOT` relative paths as well as the `*` character to indicate everything below a certain directory should be excluded.
+
+Example contents of an `.xcodecoverageignore` file:
+
+```
+${SRCROOT}/TestedProject/Machine Files/*
+${SRCROOT}/TestedProject/Third-Party/SingleFile.m
+${SRCROOT}/TestedProject/Categories/UIImage+IgnoreMe.{h,m}
+```
+
+Note: If you were using a version of XcodeCoverage prior to 1.3, you will need to move the list of files and folders you wish to ignore to the `.xcodecoverageignore` file. The current setup will prevent your customized list from being overwritten when there is an update to this project. 
 
 
 Credits
