@@ -10,7 +10,7 @@ main() {
   scripts="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
   source "${scripts}/envcov.sh"
   
-  XCODECOV_IGNORED_PATHS=$(echo "${XCODECOV_IGNORE}" | tr ",")
+  XCODECOV_IGNORED_PATHS=$(echo "${XCODECOV_IGNORE}" | tr "," "\n")
 
   LCOV_INFO=Coverage.info
   output_dir="${BUILT_PRODUCTS_DIR}"
