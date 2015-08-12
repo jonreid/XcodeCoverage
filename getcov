@@ -9,6 +9,8 @@ usage() {
 main() {
   scripts="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
   source "${scripts}/envcov.sh"
+  
+  XCODECOV_IGNORED_PATHS=$(echo ${XCODECOV_IGNORE} | tr ",")
 
   LCOV_INFO=Coverage.info
   output_dir="${BUILT_PRODUCTS_DIR}"
@@ -77,6 +79,7 @@ report_values() {
   echo "SRCROOT    : ${SRCROOT}"
   echo "OBJ_DIR    : ${OBJ_DIR}"
   echo "LCOV_PATH  : ${LCOV_PATH}"
+  echo "IGNORED    : ${XCODECOV_IGNORED_PATHS}"
 }
 
 remove_old_report() {
@@ -112,7 +115,13 @@ exclude_data() {
 
   LCOV --remove "${LCOV_INFO}" "Developer/SDKs/*" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
   LCOV --remove "${LCOV_INFO}" "main.m" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
-  # Remove other patterns here...
+
+  #Remove anything Xcode has specified should be ignored.
+  for IGNORE_THIS in XCODECOV_IGNORED_PATHS {
+  	LCOV --remove "${LCOV_INFO}" "${IGNORE_THIS}" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
+  } 
+  
+  # Remove other patterns manually below this line
 }
 
 generate_cobertura_xml() {
