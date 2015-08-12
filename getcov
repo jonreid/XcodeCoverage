@@ -117,8 +117,8 @@ exclude_data() {
   #Remove anything the .xcodecoverageignore file has specified should be ignored.
   (cat "${SRCROOT}/.xcodecoverageignore"; echo) | while read IGNORE_THIS; do
     #use eval to expand any of the variables and then pass them to the shell - this allows
-  	#use of wildcards in the variables. 
-  	eval LCOV --remove "${LCOV_INFO}" "${IGNORE_THIS}" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
+    #use of wildcards in the variables. 
+    eval LCOV --remove "${LCOV_INFO}" "${IGNORE_THIS}" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
   done
 }
 
