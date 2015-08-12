@@ -10,7 +10,7 @@ main() {
   scripts="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
   source "${scripts}/envcov.sh"
   
-  XCODECOV_IGNORED_PATHS=$(echo ${XCODECOV_IGNORE} | tr ",")
+  XCODECOV_IGNORED_PATHS=$(echo "${XCODECOV_IGNORE}" | tr ",")
 
   LCOV_INFO=Coverage.info
   output_dir="${BUILT_PRODUCTS_DIR}"
@@ -117,9 +117,9 @@ exclude_data() {
   LCOV --remove "${LCOV_INFO}" "main.m" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
 
   #Remove anything Xcode has specified should be ignored.
-  for IGNORE_THIS in XCODECOV_IGNORED_PATHS {
+  for IGNORE_THIS in ${XCODECOV_IGNORED_PATHS}; do
   	LCOV --remove "${LCOV_INFO}" "${IGNORE_THIS}" -d "${OBJ_DIR}" -o "${LCOV_INFO}"
-  } 
+  done
   
   # Remove other patterns manually below this line
 }
