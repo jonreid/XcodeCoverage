@@ -1,3 +1,9 @@
+Version 1.3.0
+-------------
+_12 August 2015_
+
+* Update to look for an `.xcodecoverageignore` file in `SRCROOT` instead of needing to manually update the `getcov` script to specify which files to ignore - a specification which would get overwritten if you were using CocoaPods and ran `pod update`. _Thanks to: Ellen Shapiro_
+
 Version 1.2.2
 -------------
 _22 Mar 2015_
