@@ -55,13 +55,15 @@ use File::Spec::Functions qw /abs2rel catdir file_name_is_absolute splitdir
 			      splitpath catpath/;
 use Getopt::Long;
 use Digest::MD5 qw(md5_base64);
+use Cwd qw/abs_path/;
 if( $^O eq "msys" )
 {
 	require File::Spec::Win32;
 }
 
 # Constants
-our $lcov_version	= 'LCOV version 1.11';
+our $tool_dir		= abs_path(dirname($0));
+our $lcov_version	= 'LCOV version '.`$tool_dir/get_version.sh --full`;
 our $lcov_url		= "http://ltp.sourceforge.net/coverage/lcov.php";
 our $gcov_tool		= "gcov";
 our $tool_name		= basename($0);
@@ -86,12 +88,10 @@ our %ERROR_ID = (
 
 our $EXCL_START = "LCOV_EXCL_START";
 our $EXCL_STOP = "LCOV_EXCL_STOP";
-our $EXCL_LINE = "LCOV_EXCL_LINE";
 
 # Marker to exclude branch coverage but keep function and line coveage
 our $EXCL_BR_START = "LCOV_EXCL_BR_START";
 our $EXCL_BR_STOP = "LCOV_EXCL_BR_STOP";
-our $EXCL_BR_LINE = "LCOV_EXCL_BR_LINE";
 
 # Compatibility mode values
 our $COMPAT_VALUE_OFF	= 0;
@@ -174,6 +174,7 @@ sub graph_error($$);
 sub graph_expect($);
 sub graph_read(*$;$$);
 sub graph_skip(*$;$);
+sub uniq(@);
 sub sort_uniq(@);
 sub sort_uniq_lex(@);
 sub graph_cleanup($);
@@ -255,6 +256,8 @@ our $gcno_split_crc;
 our $func_coverage = 1;
 our $br_coverage = 0;
 our $rc_auto_base = 1;
+our $excl_line = "LCOV_EXCL_LINE";
+our $excl_br_line = "LCOV_EXCL_BR_LINE";
 
 our $cwd = `pwd`;
 chomp($cwd);
@@ -269,9 +272,6 @@ $SIG{"INT"} = \&int_handler;
 $SIG{__WARN__} = \&warn_handler;
 $SIG{__DIE__} = \&die_handler;
 
-# Prettify version string
-$lcov_version =~ s/\$\s*Revision\s*:?\s*(\S+)\s*\$/$1/;
-
 # Set LC_ALL so that gcov output will be in a unified format
 $ENV{"LC_ALL"} = "C";
 
@@ -281,14 +281,17 @@ GetOptions("config-file=s" => \$opt_config_file,
 	   "rc=s%" => \%opt_rc);
 Getopt::Long::Configure("default");
 
-# Remove spaces around rc options
-while (my ($key, $value) = each(%opt_rc)) {
-	delete($opt_rc{$key});
+{
+	# Remove spaces around rc options
+	my %new_opt_rc;
 
-	$key =~ s/^\s+|\s+$//g;
-	$value =~ s/^\s+|\s+$//g;
+	while (my ($key, $value) = each(%opt_rc)) {
+		$key =~ s/^\s+|\s+$//g;
+		$value =~ s/^\s+|\s+$//g;
 
-	$opt_rc{$key} = $value;
+		$new_opt_rc{$key} = $value;
+	}
+	%opt_rc = %new_opt_rc;
 }
 
 # Read configuration file if available
@@ -319,6 +322,8 @@ if ($config || %opt_rc)
 		"geninfo_auto_base"		=> \$rc_auto_base,
 		"lcov_function_coverage"	=> \$func_coverage,
 		"lcov_branch_coverage"		=> \$br_coverage,
+		"lcov_excl_line"		=> \$excl_line,
+		"lcov_excl_br_line"		=> \$excl_br_line,
 	});
 
 	# Merge options
@@ -347,6 +352,13 @@ if ($config || %opt_rc)
 		} else {
 			$adjust_src_replace = $replace;
 		}
+	}
+	for my $regexp (($excl_line, $excl_br_line)) {
+		eval 'qr/'.$regexp.'/';
+		my $error = $@;
+		chomp($error);
+		$error =~ s/at \(eval.*$//;
+		die("ERROR: invalid exclude pattern: $error") if $error;
 	}
 }
 
@@ -698,7 +710,7 @@ sub gen_info($)
 	{
 		info("Scanning $directory for $ext files ...\n");
 
-		@file_list = `find "$directory" $maxdepth $follow -name \\*$ext -type f 2>/dev/null`;
+		@file_list = `find "$directory" $maxdepth $follow -name \\*$ext -type f -o -name \\*$ext -type l 2>/dev/null`;
 		chomp(@file_list);
 		if (!@file_list) {
 			warn("WARNING: no $ext files found in $directory - ".
@@ -1728,7 +1740,7 @@ sub read_gcov_file($)
 					} elsif (/$EXCL_START/) {
 						$exclude_flag = 1;
 					}
-					if (/$EXCL_LINE/ || $exclude_flag) {
+					if (/$excl_line/ || $exclude_flag) {
 						$exclude_line = 1;
 					} else {
 						$exclude_line = 0;
@@ -1741,7 +1753,7 @@ sub read_gcov_file($)
 					} elsif (/$EXCL_BR_START/) {
 						$exclude_br_flag = 1;
 					}
-					if (/$EXCL_BR_LINE/ || $exclude_br_flag) {
+					if (/$excl_br_line/ || $exclude_br_flag) {
 						$exclude_branch = 1;
 					} else {
 						$exclude_branch = 0;
@@ -1827,7 +1839,7 @@ sub read_gcov_file($)
 					} elsif (/$EXCL_START/) {
 						$exclude_flag = 1;
 					}
-					if (/$EXCL_LINE/ || $exclude_flag) {
+					if (/$excl_line/ || $exclude_flag) {
 						$exclude_line = 1;
 					} else {
 						$exclude_line = 0;
@@ -1840,7 +1852,7 @@ sub read_gcov_file($)
 					} elsif (/$EXCL_BR_START/) {
 						$exclude_br_flag = 1;
 					}
-					if (/$EXCL_BR_LINE/ || $exclude_br_flag) {
+					if (/$excl_br_line/ || $exclude_br_flag) {
 						$exclude_branch = 1;
 					} else {
 						$exclude_branch = 0;
@@ -1897,15 +1909,22 @@ sub get_gcov_version()
 	local *HANDLE;
 	my $version_string;
 	my $result;
+	my $pipe_next_line;
 
-	open(GCOV_PIPE, "-|", "\"$gcov_tool\" --version")
+	open(GCOV_PIPE, "-|", "$gcov_tool --version")
 		or die("ERROR: cannot retrieve gcov version!\n");
 	$version_string = <GCOV_PIPE>;
 	# LLVM gcov keeps version information on the second line.
 	# For example, gcov --version yields:
 	# LLVM (http://llvm.org/):
 	#   LLVM version 3.4svn
-	$version_string = <GCOV_PIPE> if ($version_string =~ /LLVM/);
+
+	$pipe_next_line = <GCOV_PIPE>;	
+	# In case version information is on first line.
+	# For example, with Xcode 7.0 gcov --version yields:
+	# Apple LLVM 7.0.0 (clang-700.0.65)
+
+	$version_string = $pipe_next_line if ($pipe_next_line && $version_string =~ /LLVM/);
 	close(GCOV_PIPE);
 
 	# Remove version information in parenthesis to cope with the following:
@@ -2126,7 +2145,7 @@ sub get_exclusion_data($)
 		} elsif (/$EXCL_START/) {
 			$flag = 1;
 		}
-		if (/$EXCL_LINE/ || $flag) {
+		if (/$excl_line/ || $flag) {
 			$list{$.} = 1;
 		}
 	}
@@ -2283,6 +2302,13 @@ sub process_graphfile($$)
 	else
 	{
 		$base_dir = $source_dir;
+	}
+
+	# Ignore empty graph file (e.g. source file with no statement)
+	if (-z $graph_filename)
+	{
+		warn("WARNING: empty $graph_filename (skipped)\n");
+		return;
 	}
 
 	if ($gcov_version < $GCOV_VERSION_3_4_0)
@@ -2529,6 +2555,27 @@ sub graph_skip(*$;$)
 }
 
 #
+# uniq(list)
+#
+# Return list without duplicate entries.
+#
+
+sub uniq(@)
+{
+	my (@list) = @_;
+	my @new_list;
+	my %known;
+
+	foreach my $item (@list) {
+		next if ($known{$item});
+		$known{$item} = 1;
+		push(@new_list, $item);
+	}
+
+	return @new_list;
+}
+
+#
 # sort_uniq(list)
 #
 # Return list in numerically ascending order and without duplicate entries.
@@ -2714,7 +2761,7 @@ sub graph_cleanup($)
 				next;
 			}
 			# Normalize list
-			$per_file->{$function} = [ sort_uniq(@$lines) ];
+			$per_file->{$function} = [ uniq(@$lines) ];
 		}
 		if (scalar(keys(%{$per_file})) == 0) {
 			# Remove empty file

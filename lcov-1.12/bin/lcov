@@ -71,7 +71,8 @@ use Cwd qw /abs_path getcwd/;
 
 
 # Global constants
-our $lcov_version	= 'LCOV version 1.11';
+our $tool_dir		= abs_path(dirname($0));
+our $lcov_version	= 'LCOV version '.`$tool_dir/get_version.sh --full`;
 our $lcov_url		= "http://ltp.sourceforge.net/coverage/lcov.php";
 our $tool_name		= basename($0);
 
@@ -180,7 +181,6 @@ our $maxdepth;
 our $no_markers;
 our $config;		# Configuration file contents
 chomp($cwd);
-our $tool_dir = dirname($0);	# Directory where genhtml tool is installed
 our @temp_dirs;
 our $gcov_gkv;		# gcov kernel support version found on machine
 our $opt_derive_func_data;
@@ -214,29 +214,23 @@ $SIG{__DIE__} = \&die_handler;
 $SIG{'INT'} = \&abort_handler;
 $SIG{'QUIT'} = \&abort_handler;
 
-# Prettify version string
-$lcov_version =~ s/\$\s*Revision\s*:?\s*(\S+)\s*\$/$1/;
-
-# Add current working directory if $tool_dir is not already an absolute path
-if (! ($tool_dir =~ /^\/(.*)$/))
-{
-	$tool_dir = "$cwd/$tool_dir";
-}
-
 # Check command line for a configuration file name
 Getopt::Long::Configure("pass_through", "no_auto_abbrev");
 GetOptions("config-file=s" => \$opt_config_file,
 	   "rc=s%" => \%opt_rc);
 Getopt::Long::Configure("default");
 
-# Remove spaces around rc options
-while (my ($key, $value) = each(%opt_rc)) {
-	delete($opt_rc{$key});
+{
+	# Remove spaces around rc options
+	my %new_opt_rc;
 
-	$key =~ s/^\s+|\s+$//g;
-	$value =~ s/^\s+|\s+$//g;
+	while (my ($key, $value) = each(%opt_rc)) {
+		$key =~ s/^\s+|\s+$//g;
+		$value =~ s/^\s+|\s+$//g;
 
-	$opt_rc{$key} = $value;
+		$new_opt_rc{$key} = $value;
+	}
+	%opt_rc = %new_opt_rc;
 }
 
 # Read configuration file if available
@@ -605,7 +599,7 @@ sub userspace_reset()
 	{
 		info("Deleting all .da files in $current_dir".
 		     ($no_recursion?"\n":" and subdirectories\n"));
-		@file_list = `find "$current_dir" $maxdepth $follow -name \\*\\.da -o -name \\*\\.gcda -type f 2>/dev/null`;
+		@file_list = `find "$current_dir" $maxdepth $follow -name \\*\\.da -type f -o -name \\*\\.gcda -type f 2>/dev/null`;
 		chomp(@file_list);
 		foreach (@file_list)
 		{
@@ -936,17 +930,21 @@ sub get_package($)
 	local *HANDLE;
 
 	info("Reading package $file:\n");
-	info("  data directory .......: $dir\n");
 	$file = abs_path($file);
 	chdir($dir);
 	open(HANDLE, "-|", "tar xvfz '$file' 2>/dev/null")
 		or die("ERROR: could not process package $file\n");
+	$count = 0;
 	while (<HANDLE>) {
 		if (/\.da$/ || /\.gcda$/) {
 			$count++;
 		}
 	}
 	close(HANDLE);
+	if ($count == 0) {
+		die("ERROR: no data file found in package $file\n");
+	}
+	info("  data directory .......: $dir\n");
 	$build = read_file("$dir/$pkg_build_file");
 	if (defined($build)) {
 		info("  build directory ......: $build\n");
@@ -1020,6 +1018,10 @@ sub create_package($$$;$)
 	my ($file, $dir, $build, $gkv) = @_;
 	my $cwd = getcwd();
 
+	# Check for availability of tar tool first
+	system("tar --help > /dev/null")
+		and die("ERROR: tar command not available\n");
+
 	# Print information about the package
 	info("Creating package $file:\n");
 	info("  data directory .......: $dir\n");
@@ -1048,6 +1050,7 @@ sub create_package($$$;$)
 	chdir($dir);
 	system("tar cfz $file .")
 		and die("ERROR: could not create package $file\n");
+	chdir($cwd);
 
 	# Remove temporary files
 	unlink("$dir/$pkg_build_file");
@@ -1061,7 +1064,6 @@ sub create_package($$$;$)
 			info("  data files ...........: $count\n");
 		}
 	}
-	chdir($cwd);
 }
 
 sub find_link_fn($$$)
@@ -1284,6 +1286,113 @@ sub kernel_capture()
 }
 
 #
+# link_data_cb(datadir, rel, graphdir)
+#
+# Create symbolic link in GRAPDIR/REL pointing to DATADIR/REL.
+#
+
+sub link_data_cb($$$)
+{
+	my ($datadir, $rel, $graphdir) = @_;
+	my $absfrom = catfile($datadir, $rel);
+	my $absto = catfile($graphdir, $rel);
+	my $base;
+	my $dir;
+
+	if (-e $absto) {
+		die("ERROR: could not create symlink at $absto: ".
+		    "File already exists!\n");
+	}
+	if (-l $absto) {
+		# Broken link - possibly from an interrupted earlier run
+		unlink($absto);
+	}
+
+	# Check for graph file
+	$base = $absto;
+	$base =~ s/\.(gcda|da)$//;
+	if (! -e $base.".gcno" && ! -e $base.".bbg" && ! -e $base.".bb") {
+		die("ERROR: No graph file found for $absfrom in ".
+		    dirname($base)."!\n");
+	}
+
+	symlink($absfrom, $absto) or
+		die("ERROR: could not create symlink at $absto: $!\n");
+}
+
+#
+# unlink_data_cb(datadir, rel, graphdir)
+#
+# Remove symbolic link from GRAPHDIR/REL to DATADIR/REL.
+#
+
+sub unlink_data_cb($$$)
+{
+	my ($datadir, $rel, $graphdir) = @_;
+	my $absfrom = catfile($datadir, $rel);
+	my $absto = catfile($graphdir, $rel);
+	my $target;
+
+	return if (!-l $absto);
+	$target = readlink($absto);
+	return if (!defined($target) || $target ne $absfrom);
+
+	unlink($absto) or
+		warn("WARNING: could not remove symlink $absto: $!\n");
+}
+
+#
+# link_data(datadir, graphdir, create)
+#
+# If CREATE is non-zero, create symbolic links in GRAPHDIR for data files
+# found in DATADIR. Otherwise remove link in GRAPHDIR.
+#
+
+sub link_data($$$)
+{
+	my ($datadir, $graphdir, $create) = @_;
+
+	$datadir = abs_path($datadir);
+	$graphdir = abs_path($graphdir);
+	if ($create) {
+		lcov_find($datadir, \&link_data_cb, $graphdir, '\.gcda$',
+			  '\.da$');
+	} else {
+		lcov_find($datadir, \&unlink_data_cb, $graphdir, '\.gcda$',
+			  '\.da$');
+	}
+}
+
+#
+# find_graph_cb(datadir, rel, count_ref)
+#
+# Count number of files found.
+#
+
+sub find_graph_cb($$$)
+{
+	my ($dir, $rel, $count_ref) = @_;
+
+	($$count_ref)++;
+}
+
+#
+# find_graph(dir)
+#
+# Search DIR for a graph file. Return non-zero if one was found, zero otherwise.
+#
+
+sub find_graph($)
+{
+	my ($dir) = @_;
+	my $count = 0;
+
+	lcov_find($dir, \&find_graph_cb, \$count, '\.gcno$', '\.bb$', '\.bbg$');
+
+	return $count > 0 ? 1 : 0;
+}
+
+#
 # package_capture()
 #
 # Capture coverage data from a package of unprocessed coverage data files
@@ -1318,7 +1427,16 @@ sub package_capture()
 	} else {
 		# Build directory needs to be passed to geninfo
 		$base_directory = $build;
-		lcov_geninfo($dir);
+		if (find_graph($dir)) {
+			# Package contains graph files - collect from there
+			lcov_geninfo($dir);
+		} else {
+			# No graph files found, link data files next to
+			# graph files
+			link_data($dir, $base_directory, 1);
+			lcov_geninfo($base_directory);
+			link_data($dir, $base_directory, 0);
+		}
 	}
 }
 
@@ -4152,6 +4270,9 @@ sub abort_handler($)
 
 sub temp_cleanup()
 {
+	# Ensure temp directory is not in use by current process
+	chdir("/");
+
 	if (@temp_dirs) {
 		info("Removing temporary directories.\n");
 		foreach (@temp_dirs) {
