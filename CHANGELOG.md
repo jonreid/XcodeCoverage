@@ -1,7 +1,7 @@
 IN PROGRESS
 -----------
 
-* Look for an `.xcodecoverageignore` file in `SRCROOT` instead of needing to manually update the `getcov` script to specify which files to ignore - a specification which would get overwritten if you were using CocoaPods and ran `pod update`. _Thanks to: Ellen Shapiro_
+* Instead of editing `getcov` directly to exclude certain files from coverage, specify them in an `.xcodecoverageignore` file in `SRCROOT`. _Thanks to: Ellen Shapiro_
 * Add ability to generate Clover XML reports for Bamboo CI. Call getcov with `--xmlclover` or `-xc`. _Thanks to: Kamil Pyć_
 
 
