@@ -1,4 +1,4 @@
-![XcodeCoverage](http://qualitycoding.org/jrwp/wp-content/uploads/2014/03/XcodeCoverage.png)
+![XcodeCoverage](http://qualitycoding.org/jrwp/wp-content/uploads/2016/01/XcodeCoverage@2x.png)
 
 XcodeCoverage provides a simple way to generate reports of the code coverage of your Xcode project. Generated reports include HTML and Cobertura XML.
 
