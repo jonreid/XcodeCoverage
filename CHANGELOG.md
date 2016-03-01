@@ -1,6 +1,8 @@
-IN PROGRESS
------------
+Version 1.3.0
+-------------
+_29 Feb 2016_
 
+* Updated lcov to 1.12 for Xcode 7 compatibility. _Thanks to: Nico Elayda_
 * Instead of editing `getcov` directly to exclude certain files from coverage, specify them in an `.xcodecoverageignore` file in `SRCROOT`. _Thanks to: Ellen Shapiro_
 * Add ability to generate Clover XML reports for Bamboo CI. Call getcov with `--xmlclover` or `-xc`. _Thanks to: Kamil Pyć_
 
