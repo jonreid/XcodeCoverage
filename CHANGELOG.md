@@ -1,3 +1,10 @@
+Version 1.3.1
+-------------
+_24 Sep 2017_
+
+* Updated lcov to 1.13 for Xcode 8/9 compatibility. _Thanks to: senmiao_
+
+
 Version 1.3.0
 -------------
 _29 Feb 2016_
