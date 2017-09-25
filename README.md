@@ -45,14 +45,16 @@ Xcode Project Setup
 XcodeCoverage comes with an xcconfig file with the build settings required to instrument your code for coverage analysis.
 
 If you already use an xcconfig, include it in the configuration you want to instrument:
+
   * Standard installation: `#include "XcodeCoverage/XcodeCoverage.xcconfig"`
   * CocoaPods installation: `#include "Pods/XcodeCoverage/XcodeCoverage.xcconfig"`
 
 If you don't already use an xcconfig, drag XcodeCoverage.xcconfig into your project. Where it prompts "Add to targets," deselect all targets. (Otherwise, it will be included in the bundle.) Then click on your project in Xcode's Navigator pane, and select the Info tab. For the configuration you want to instrument, select XcodeCoverage.
 
 If you'd rather specify the build settings by hand, enable these two settings at the project level:
+
   * Instrument Program Flow
-  * Generate Test Coverage Files
+  * Generate Legacy Test Coverage Files
 
 Make sure not to instrument your AppStore release.
 
