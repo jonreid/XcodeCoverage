@@ -5,7 +5,7 @@
 scripts="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${scripts}/env.sh"
 
-LCOV_PATH="${scripts}/lcov-1.12/bin"
+LCOV_PATH="${scripts}/lcov-1.13/bin"
 OBJ_DIR="${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}"
 
 # Fix for the new LLVM-COV that requires gcov to have a -v parameter
