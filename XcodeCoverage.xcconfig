@@ -1,4 +1,4 @@
-//  XcodeCoverage by Jon Reid, http://qualitycoding.org/about/
+//  XcodeCoverage by Jon Reid, https://qualitycoding.org/
 //  Source: https://github.com/jonreid/XcodeCoverage
 
 GCC_GENERATE_TEST_COVERAGE_FILES = YES
