@@ -1,5 +1,6 @@
-NEXT RELEASE
-------------
+Version 1.3.2
+-------------
+_01 Feb 2019_
 
 * Fixed for projects using Xcode "New Build System"
 
