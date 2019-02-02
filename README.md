@@ -2,9 +2,11 @@
 
 [![CocoaPods Version](https://cocoapod-badges.herokuapp.com/v/XcodeCoverage/badge.png)](http://cocoapods.org/pods/XcodeCoverage)
 
-XcodeCoverage provides a simple way to generate reports of the code coverage of your Xcode project. Generated reports include HTML and Cobertura XML.
+XcodeCoverage provides a simple way to generate reports of the Objective-C code coverage of your Xcode project. Generated reports include HTML and Cobertura XML.
 
 Coverage data excludes Apple's SDKs, and the exclusion rules can be customized.
+
+Sadly, Swift coverage is not supported.
 
 
 Installation: Standard
