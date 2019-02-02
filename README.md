@@ -14,7 +14,7 @@ Use the standard installation if you want to customize XcodeCoverage to exclude 
 
 1. Fork this repository.
 2. Place the XcodeCoverage folder in the same folder as your Xcode project.
-3. In your main target, add a Run Script build phase to execute `XcodeCoverage/exportenv.sh`
+3. In your main target's Build Phases, add a Run Script build phase to execute `XcodeCoverage/exportenv.sh`
 
 A few people have been tripped up by the last step: Make sure you add the script to your main target (your app or library), not your test target.
 
