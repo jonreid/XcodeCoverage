@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   Copyright (c) International Business Machines  Corp., 2002
 #
@@ -30,6 +30,7 @@
 #
 
 use strict;
+use warnings;
 use File::Basename; 
 use Getopt::Long;
 use Cwd qw/abs_path/;
@@ -37,7 +38,7 @@ use Cwd qw/abs_path/;
 
 # Constants
 our $tool_dir		= abs_path(dirname($0));
-our $lcov_version	= "LCOV version 1.13";
+our $lcov_version	= "LCOV version 1.14";
 our $lcov_url		= "http://ltp.sourceforge.net/coverage/lcov.php";
 our $tool_name		= basename($0);
 

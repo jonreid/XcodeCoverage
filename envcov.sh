@@ -13,7 +13,7 @@ else
     ARCHITECTURE=${CURRENT_ARCH}
 fi
 
-LCOV_PATH="${scripts}/lcov-1.13/bin"
+LCOV_PATH="${scripts}/lcov-1.14/bin"
 OBJ_DIR="${OBJECT_FILE_DIR_normal}/${ARCHITECTURE}"
 
 # Fix for the new LLVM-COV that requires gcov to have a -v parameter
