@@ -1,3 +1,11 @@
+Version 1.4.0
+-------------
+_01 Jan 2020_
+
+* Updated lcov to 1.14
+* Updated lcov_cobertura.py to 2.0.3
+
+
 Version 1.3.2
 -------------
 _01 Feb 2019_
