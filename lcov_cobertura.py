@@ -3,18 +3,7 @@
 # Copyright 2011-2012 Eric Wendelin
 #
 # This is free software, licensed under the Apache License, Version 2.0,
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# available in the accompanying LICENSE.txt file.
 
 """
 Converts lcov line coverage output to Cobertura-compatible XML for CI
@@ -24,11 +13,30 @@ import re
 import sys
 import os
 import time
+import subprocess
 from xml.dom import minidom
 from optparse import OptionParser
 
-VERSION = '1.5'
+from distutils.spawn import find_executable
+
+CPPFILT = "c++filt"
+HAVE_CPPFILT = False
+
+if find_executable(CPPFILT) is not None:
+    HAVE_CPPFILT = True
+
+VERSION = '1.6'
 __all__ = ['LcovCobertura']
+
+
+class Demangler(object):
+    def __init__(self):
+        self.pipe = subprocess.Popen(
+            CPPFILT, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+
+    def demangle(self, name):
+        self.pipe.stdin.write(name + "\n")
+        return self.pipe.stdout.readline().rstrip()
 
 
 class LcovCobertura(object):
@@ -41,10 +49,10 @@ class LcovCobertura(object):
     >>> LCOV_INPUT = 'your lcov input'
     >>> converter = LcovCobertura(LCOV_INPUT)
     >>> cobertura_xml = converter.convert()
-    >>> print cobertura_xml
+    >>> print(cobertura_xml)
     """
 
-    def __init__(self, lcov_data, base_dir='.', excludes=None):
+    def __init__(self, lcov_data, base_dir='.', excludes=None, demangle=False):
         """
         Create a new :class:`LcovCobertura` object using the given `lcov_data`
         and `options`.
@@ -55,6 +63,8 @@ class LcovCobertura(object):
         :type base_dir: string
         :param excludes: list of regexes to packages as excluded
         :type excludes: [string]
+        :param demangle: whether to demangle function names using c++filt
+        :type demangle: bool
         """
 
         if not excludes:
@@ -62,6 +72,11 @@ class LcovCobertura(object):
         self.lcov_data = lcov_data
         self.base_dir = base_dir
         self.excludes = excludes
+        if demangle:
+            demangler = Demangler()
+            self.format = demangler.demangle
+        else:
+            self.format = lambda x: x
 
     def convert(self):
         """
@@ -119,17 +134,17 @@ class LcovCobertura(object):
                 file_name = line_parts[-1].strip()
                 relative_file_name = os.path.relpath(file_name, self.base_dir)
                 package = '.'.join(relative_file_name.split(os.path.sep)[0:-1])
-                class_name = file_name.split(os.path.sep)[-1]
+                class_name = '.'.join(relative_file_name.split(os.path.sep))
                 if package not in coverage_data['packages']:
                     coverage_data['packages'][package] = {
                         'classes': {}, 'lines-total': 0, 'lines-covered': 0,
                         'branches-total': 0, 'branches-covered': 0
                     }
                 coverage_data['packages'][package]['classes'][
-                relative_file_name] = {
-                    'name': class_name, 'lines': {}, 'lines-total': 0,
-                    'lines-covered': 0, 'branches-total': 0,
-                    'branches-covered': 0
+                    relative_file_name] = {
+                        'name': class_name, 'lines': {}, 'lines-total': 0,
+                        'lines-covered': 0, 'branches-total': 0,
+                        'branches-covered': 0
                 }
                 package = package
                 current_file = relative_file_name
@@ -177,12 +192,14 @@ class LcovCobertura(object):
                 file_branches_covered = int(line_parts[1])
             elif input_type == 'FN':
                 # FN:5,(anonymous_1)
-                function_name = line_parts[-1].strip().split(',')[1]
-                file_methods[function_name] = '0'
+                function_line, function_name = line_parts[-1].strip().split(',')
+                file_methods[function_name] = [function_line, '0']
             elif input_type == 'FNDA':
                 # FNDA:0,(anonymous_1)
                 (function_hits, function_name) = line_parts[-1].strip().split(',')
-                file_methods[function_name] = function_hits
+                if function_name not in file_methods:
+                    file_methods[function_name] = ['0', '0']
+                file_methods[function_name][-1] = function_hits
 
         # Exclude packages
         excluded = [x for x in coverage_data['packages'] for e in self.excludes
@@ -211,7 +228,7 @@ class LcovCobertura(object):
 
         dom_impl = minidom.getDOMImplementation()
         doctype = dom_impl.createDocumentType("coverage", None,
-                                              "http://cobertura.sourceforge.net/xml/coverage-03.dtd")
+                                              "http://cobertura.sourceforge.net/xml/coverage-04.dtd")
         document = dom_impl.createDocument(None, "coverage", doctype)
         root = document.documentElement
         summary = coverage_data['summary']
@@ -223,9 +240,10 @@ class LcovCobertura(object):
             'complexity': '0',
             'line-rate': self._percent(summary['lines-total'],
                                        summary['lines-covered']),
+            'lines-covered': str(summary['lines-covered']),
             'lines-valid': str(summary['lines-total']),
             'timestamp': coverage_data['timestamp'],
-            'version': '1.9'
+            'version': '2.0.3'
         })
 
         sources = self._el(document, 'sources', {})
@@ -242,7 +260,8 @@ class LcovCobertura(object):
             package_el = self._el(document, 'package', {
                 'line-rate': package_data['line-rate'],
                 'branch-rate': package_data['branch-rate'],
-                'name': package_name
+                'name': package_name,
+                'complexity': '0',
             })
             classes_el = self._el(document, 'classes', {})
             for class_name, class_data in list(package_data['classes'].items()):
@@ -258,12 +277,21 @@ class LcovCobertura(object):
 
                 # Process methods
                 methods_el = self._el(document, 'methods', {})
-                for method_name, hits in list(class_data['methods'].items()):
+                for method_name, (line, hits) in list(class_data['methods'].items()):
                     method_el = self._el(document, 'method', {
-                        'name': method_name,
+                        'name': self.format(method_name),
                         'signature': '',
-                        'hits': hits
+                        'line-rate': '1.0' if int(hits) > 0 else '0.0',
+                        'branch-rate': '1.0' if int(hits) > 0 else '0.0',
                     })
+                    method_lines_el = self._el(document, 'lines', {})
+                    method_line_el = self._el(document, 'line', {
+                        'hits': hits,
+                        'number': line,
+                        'branch': 'false',
+                    })
+                    method_lines_el.appendChild(method_line_el)
+                    method_el.appendChild(method_lines_el)
                     methods_el.appendChild(method_el)
 
                 # Process lines
@@ -334,44 +362,53 @@ class LcovCobertura(object):
             return '0.0'
         return str(float(float(lines_covered) / float(lines_total)))
 
+
+def main(argv=None):
+    """
+    Converts LCOV coverage data to Cobertura-compatible XML for reporting.
+
+    Usage:
+        lcov_cobertura.py lcov-file.dat
+        lcov_cobertura.py lcov-file.dat -b src/dir -e test.lib -o path/out.xml
+
+    By default, XML output will be written to ./coverage.xml
+    """
+    if argv is None:
+        argv = sys.argv
+    parser = OptionParser()
+    parser.usage = ('lcov_cobertura.py lcov-file.dat [-b source/dir] '
+                    '[-e <exclude packages regex>] [-o output.xml] [-d]')
+    parser.description = 'Converts lcov output to cobertura-compatible XML'
+    parser.add_option('-b', '--base-dir', action='store',
+                      help='Directory where source files are located',
+                      dest='base_dir', default='.')
+    parser.add_option('-e', '--excludes',
+                      help='Comma-separated list of regexes of packages to exclude',
+                      action='append', dest='excludes', default=[])
+    parser.add_option('-o', '--output',
+                      help='Path to store cobertura xml file',
+                      action='store', dest='output', default='coverage.xml')
+    parser.add_option('-d', '--demangle',
+                      help='Demangle C++ function names using %s' % CPPFILT,
+                      action='store_true', dest='demangle', default=False)
+    (options, args) = parser.parse_args(args=argv)
+
+    if options.demangle and not HAVE_CPPFILT:
+        raise RuntimeError("C++ filter executable (%s) not found!" % CPPFILT)
+
+    if len(args) != 2:
+        print(main.__doc__)
+        sys.exit(1)
+
+    try:
+        with open(args[1], 'r') as lcov_file:
+            lcov_data = lcov_file.read()
+            lcov_cobertura = LcovCobertura(lcov_data, options.base_dir, options.excludes, options.demangle)
+            cobertura_xml = lcov_cobertura.convert()
+        with open(options.output, mode='wt') as output_file:
+            output_file.write(cobertura_xml)
+    except IOError:
+        sys.stderr.write("Unable to convert %s to Cobertura XML" % args[1])
+
 if __name__ == '__main__':
-    def main(argv):
-        """
-        Converts LCOV coverage data to Cobertura-compatible XML for reporting.
-
-        Usage:
-            lcov_cobertura.py lcov-file.dat
-            lcov_cobertura.py lcov-file.dat -b src/dir -e test.lib -o path/out.xml
-
-        By default, XML output will be written to ./coverage.xml
-        """
-
-        parser = OptionParser()
-        parser.usage = 'lcov_cobertura.py lcov-file.dat [-b source/dir] [-e <exclude packages regex>] [-o output.xml]'
-        parser.description = 'Converts lcov output to cobertura-compatible XML'
-        parser.add_option('-b', '--base-dir', action='store',
-                          help='Directory where source files are located',
-                          dest='base_dir', default='.')
-        parser.add_option('-e', '--excludes',
-                          help='Comma-separated list of regexes of packages to exclude',
-                          action='append', dest='excludes', default=[])
-        parser.add_option('-o', '--output',
-                          help='Path to store cobertura xml file',
-                          action='store', dest='output', default='coverage.xml')
-        (options, args) = parser.parse_args(args=argv)
-
-        if len(args) != 2:
-            print((main.__doc__))
-            sys.exit(1)
-
-        try:
-            with open(args[1], 'r') as lcov_file:
-                lcov_data = lcov_file.read()
-                lcov_cobertura = LcovCobertura(lcov_data, options.base_dir, options.excludes)
-                cobertura_xml = lcov_cobertura.convert()
-            with open(options.output, mode='wt') as output_file:
-                output_file.write(cobertura_xml)
-        except IOError:
-            sys.stderr.write("Unable to convert %s to Cobertura XML" % args[1])
-
-    main(sys.argv)
+    main()
